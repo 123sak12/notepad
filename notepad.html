@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teen Girl Note App</title>
+  <style>
+    body {
+      font-family: 'Indie Flower', cursive;
+      background: linear-gradient(to right, #ffe0f0, #e0cfff);
+      margin: 0;
+      padding: 20px;
+      color: #4a148c;
+    }
+    h1 {
+      text-align: center;
+      color: #ad1457;
+    }
+    .note-app {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff0f5;
+      border: 2px dashed #ce93d8;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      border-radius: 10px;
+      border: 1px solid #ba68c8;
+      padding: 10px;
+      font-size: 16px;
+      resize: none;
+    }
+    button {
+      background-color: #f06292;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #ec407a;
+    }
+    .note {
+      background-color: #fce4ec;
+      border: 1px solid #f8bbd0;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
+      position: relative;
+    }
+    .note p {
+      margin: 0;
+      cursor: pointer;
+    }
+    .delete-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: transparent;
+      border: none;
+      color: #d81b60;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .nav {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav button {
+      margin: 5px;
+      background-color: #ba68c8;
+    }
+    .page {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .welcome-box {
+      text-align: center;
+      background: #fff0f5;
+      border: 2px dashed #ce93d8;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav">
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('notes')">Notes</button>
+    <button onclick="showPage('about')">About</button>
+  </div>
+
+  <div id="home" class="page active">
+    <div class="welcome-box">
+      <h1>Welcome to My Cute Note App!</h1>
+      <p>Write your dreams, secrets, and sweet thoughts here!</p>
+    </div>
+  </div>
+
+  <div id="notes" class="page">
+    <h1>My Lovely Notes ✨</h1>
+    <div class="note-app">
+      <textarea id="noteInput" placeholder="Write something magical..."></textarea>
+      <button onclick="saveNote()">Save Note</button>
+      <div id="notesContainer"></div>
+    </div>
+  </div>
+
+  <div id="about" class="page">
+    <div class="welcome-box">
+      <h1>About This App</h1>
+      <p>This cute app is made for teen girls to write their magical ideas, thoughts, and dreams!</p>
+    </div>
+  </div>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function saveNote() {
+      const text = document.getElementById('noteInput').value.trim();
+      if (text === '') return;
+
+      let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+      notes.push(text);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      document.getElementById('noteInput').value = '';
+      showNotes();
+    }
+
+    function showNotes() {
+      const container = document.getElementById('notesContainer');
+      container.innerHTML = '';
+      const notes = JSON.parse(localStorage.getItem('notes') || '[]');
+
+      notes.forEach((note, index) => {
+        const div = document.createElement('div');
+        div.className = 'note';
+        div.innerHTML = `
+          <p onclick="editNote(${index})">${note}</p>
+          <button class="delete-btn" onclick="deleteNote(${index})">✖</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteNote(index) {
+      let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+      notes.splice(index, 1);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      showNotes();
+    }
+
+    function editNote(index) {
+      let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+      const newNote = prompt("Edit your note:", notes[index]);
+      if (newNote !== null) {
+        notes[index] = newNote;
+        localStorage.setItem('notes', JSON.stringify(notes));
+        showNotes();
+      }
+    }
+
+    showNotes();
+  </script>
+</body>
+</html>
